@@ -7,8 +7,8 @@ git clone https://github.com/nskondratev/postgres-sqlpad-setup.git
 ```
 
 ## Требования
-* [Docker](https://docs.docker.com/engine/install/)
-* [Docker Compose](https://docs.docker.com/compose/install/)
+* Установленный [Docker](https://docs.docker.com/engine/install/)
+* Установленный [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Структура проекта
 * `data` - директория, где лежат данные PostgreSQL и базы данных SQLPad. Нужно для того, чтобы сохранять состояние между перезапусками.
