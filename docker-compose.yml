@@ -32,6 +32,8 @@ services:
       SQLPAD_CONNECTIONS__pgdemo__password: sqlpad_user
       SQLPAD_CONNECTIONS__pgdemo__multiStatementTransactionEnabled: 'true'
       SQLPAD_CONNECTIONS__pgdemo__idleTimeoutSeconds: 86400
+      SQLPAD_QUERY_RESULT_MAX_ROWS: 100000
+      SQLPAD_TIMEOUT_SECONDS: 1000
     volumes:
       # - ./seed-data:/etc/sqlpad/seed-data
       - ./data/sqlpad:/sqlpad_data
