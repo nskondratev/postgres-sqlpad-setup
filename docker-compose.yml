@@ -34,6 +34,16 @@ services:
       SQLPAD_CONNECTIONS__pgdemo__idleTimeoutSeconds: 86400
       SQLPAD_QUERY_RESULT_MAX_ROWS: 100000
       SQLPAD_TIMEOUT_SECONDS: 1000
+      SQLPAD_WEBHOOK_ENABLED: 'true'
+      SQLPAD_WEBHOOK_QUERY_CREATED_URL: 'http://webhooks:8090/query_created'
     volumes:
       # - ./seed-data:/etc/sqlpad/seed-data
       - ./data/sqlpad:/sqlpad_data
+    links:
+      - webhooks
+
+  webhooks:
+    build: ./webhooks
+    hostname: webhooks
+    environment:
+      ADDR: ':8090'
