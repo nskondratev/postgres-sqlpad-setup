@@ -34,9 +34,9 @@ func main() {
 		},
 	}
 
-	sqlpadClient := sqlpad.NewClient("http://sqlpad:3000", "admin@sqlpad.com", "admin", httpClient)
+	sqlpadClient := sqlpad.NewClient(os.Getenv("SQLPAD_HOST"), os.Getenv("SQLPAD_ADMIN"), os.Getenv("SQLPAD_ADMIN_PASSWORD"), httpClient)
 
-	queryHandler := query.NewHandler(sqlpadClient, "admin@sqlpad.com")
+	queryHandler := query.NewHandler(sqlpadClient, os.Getenv("SQLPAD_ADMIN"))
 
 	http.Handle("/query_created", queryHandler)
 
@@ -96,4 +96,12 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("Gracefully shutdown")
+}
+
+func envDuration(key string, defaultValue time.Duration) time.Duration {
+	parsed, err := time.ParseDuration(os.Getenv(key))
+	if err != nil {
+		return defaultValue
+	}
+	return parsed
 }
