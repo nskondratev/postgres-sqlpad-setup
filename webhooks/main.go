@@ -13,8 +13,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/query"
 	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/sqlpad"
+	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/users"
 	"golang.org/x/sync/errgroup"
 )
+
+const twoWeeks = 14 * 24 * time.Hour
 
 func main() {
 	_ = godotenv.Load()
@@ -37,6 +40,11 @@ func main() {
 	sqlpadClient := sqlpad.NewClient(os.Getenv("SQLPAD_HOST"), os.Getenv("SQLPAD_ADMIN"), os.Getenv("SQLPAD_ADMIN_PASSWORD"), httpClient)
 
 	queryHandler := query.NewHandler(sqlpadClient, os.Getenv("SQLPAD_ADMIN"))
+
+	cleanupTicker := users.NewTicker(
+		users.NewCleanuper(sqlpadClient, envDuration("SQLPAD_USER_LIFETIME_DURATION", twoWeeks)),
+		envDuration("SQLPAD_USER_CLEANUP_INTERVAL_DURATION", time.Hour),
+	)
 
 	http.Handle("/query_created", queryHandler)
 
@@ -68,6 +76,7 @@ func main() {
 		return nil
 	})
 
+	// HTTP Server
 	g.Go(func() error {
 		c := make(chan error, 1)
 		go func() {
@@ -89,6 +98,11 @@ func main() {
 			return ctx.Err()
 		}
 		return nil
+	})
+
+	// Users cleanup ticker
+	g.Go(func() error {
+		return cleanupTicker.Run(ctx)
 	})
 
 	err := g.Wait()

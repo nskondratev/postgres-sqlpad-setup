@@ -13,7 +13,7 @@ const (
 
 // GetUsers возвращает список пользователей
 func (c *Client) GetUsers(ctx context.Context) (users []User, err error) {
-	err = c.doRequest(ctx, http.MethodGet, usersPath, nil, users)
+	err = c.doRequest(ctx, http.MethodGet, usersPath, nil, &users)
 	if err != nil {
 		return nil, fmt.Errorf("[sqlpad_client] failed to get users: %w", err)
 	}
@@ -23,7 +23,7 @@ func (c *Client) GetUsers(ctx context.Context) (users []User, err error) {
 
 // DeleteUser удаляет пользователя
 func (c *Client) DeleteUser(ctx context.Context, userID string) error {
-	err := c.doRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", usersPath, userID), nil, nil)
+	err := c.doRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", usersPath, userID), nil, nil)
 	if err != nil {
 		return fmt.Errorf("[sqlpad_client] failed to delete user: %w", err)
 	}
@@ -33,7 +33,7 @@ func (c *Client) DeleteUser(ctx context.Context, userID string) error {
 
 // DeleteQuery удаляет пользователя
 func (c *Client) DeleteQuery(ctx context.Context, queryID string) error {
-	err := c.doRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", queriesPath, queryID), nil, nil)
+	err := c.doRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", queriesPath, queryID), nil, nil)
 	if err != nil {
 		return fmt.Errorf("[sqlpad_client] failed to delete query: %w", err)
 	}
