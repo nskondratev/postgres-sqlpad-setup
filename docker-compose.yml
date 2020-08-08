@@ -18,6 +18,7 @@ services:
     ports:
       - '3000:3000'
     environment:
+      PUBLIC_URL: ${PUBLIC_URL}
       SQLPAD_ADMIN: ${SQLPAD_ADMIN}
       SQLPAD_ADMIN_PASSWORD: ${SQLPAD_ADMIN_PASSWORD}
       SQLPAD_APP_LOG_LEVEL: debug
@@ -39,7 +40,7 @@ services:
     volumes:
       - ./data/sqlpad:/sqlpad_data
     links:
-      - webhooks
+      - postgres
 
   webhooks:
     build: ./webhooks
@@ -51,3 +52,5 @@ services:
       SQLPAD_ADMIN_PASSWORD: ${SQLPAD_ADMIN_PASSWORD}
       SQLPAD_USER_LIFETIME_DURATION: ${SQLPAD_USER_LIFETIME_DURATION}
       SQLPAD_USER_CLEANUP_INTERVAL_DURATION: ${SQLPAD_USER_CLEANUP_INTERVAL_DURATION}
+    links:
+      - sqlpad
