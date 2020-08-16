@@ -4,9 +4,9 @@ services:
     image: postgres:12
     restart: always
     environment:
-      POSTGRES_USER: sqlpad
-      POSTGRES_PASSWORD: sqlpad
-      POSTGRES_DB: sqlpad
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./data/postgres:/var/lib/postgresql/data
@@ -18,22 +18,39 @@ services:
     ports:
       - '3000:3000'
     environment:
-      SQLPAD_ADMIN: 'admin@sqlpad.com'
-      SQLPAD_ADMIN_PASSWORD: 'admin'
+      PUBLIC_URL: ${PUBLIC_URL}
+      SQLPAD_ADMIN: ${SQLPAD_ADMIN}
+      SQLPAD_ADMIN_PASSWORD: ${SQLPAD_ADMIN_PASSWORD}
       SQLPAD_APP_LOG_LEVEL: debug
       SQLPAD_WEB_LOG_LEVEL: warn
       SQLPAD_DB_PATH: /sqlpad_data
       SQLPAD_SEED_DATA_PATH: /etc/sqlpad/seed-data
-      SQLPAD_CONNECTIONS__pgdemo__name: Postgres demo
+      SQLPAD_CONNECTIONS__pgdemo__name: Avito data
       SQLPAD_CONNECTIONS__pgdemo__driver: postgres
       SQLPAD_CONNECTIONS__pgdemo__host: postgres
-      SQLPAD_CONNECTIONS__pgdemo__database: sqlpad
-      SQLPAD_CONNECTIONS__pgdemo__username: sqlpad_user
-      SQLPAD_CONNECTIONS__pgdemo__password: sqlpad_user
+      SQLPAD_CONNECTIONS__pgdemo__database: ${POSTGRES_DB}
+      SQLPAD_CONNECTIONS__pgdemo__username: ${SQLPAD_CONNECTION_USER}
+      SQLPAD_CONNECTIONS__pgdemo__password: ${SQLPAD_CONNECTION_PASSWORD}
       SQLPAD_CONNECTIONS__pgdemo__multiStatementTransactionEnabled: 'true'
       SQLPAD_CONNECTIONS__pgdemo__idleTimeoutSeconds: 86400
-      SQLPAD_QUERY_RESULT_MAX_ROWS: 100000
-      SQLPAD_TIMEOUT_SECONDS: 1000
+      SQLPAD_QUERY_RESULT_MAX_ROWS: ${SQLPAD_QUERY_RESULT_MAX_ROWS}
+      SQLPAD_TIMEOUT_SECONDS: ${SQLPAD_TIMEOUT_SECONDS}
+      SQLPAD_WEBHOOK_ENABLED: 'true'
+      SQLPAD_WEBHOOK_QUERY_CREATED_URL: 'http://webhooks:8090/query_created'
     volumes:
-      # - ./seed-data:/etc/sqlpad/seed-data
       - ./data/sqlpad:/sqlpad_data
+    links:
+      - postgres
+
+  webhooks:
+    build: ./webhooks
+    hostname: webhooks
+    environment:
+      ADDR: ':8090'
+      SQLPAD_HOST: 'http://sqlpad:3000'
+      SQLPAD_ADMIN: ${SQLPAD_ADMIN}
+      SQLPAD_ADMIN_PASSWORD: ${SQLPAD_ADMIN_PASSWORD}
+      SQLPAD_USER_LIFETIME_DURATION: ${SQLPAD_USER_LIFETIME_DURATION}
+      SQLPAD_USER_CLEANUP_INTERVAL_DURATION: ${SQLPAD_USER_CLEANUP_INTERVAL_DURATION}
+    links:
+      - sqlpad

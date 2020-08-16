@@ -1,0 +1,25 @@
+version: '3'
+services:
+  nginx:
+    image: umputun/nginx-le:latest
+    hostname: nginx
+    restart: always
+    depends_on:
+      - sqlpad
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    volumes:
+      - ./data/nginx_ssl:/etc/nginx/ssl
+      - ./nginx/service-sqlpad.conf:/etc/nginx/service-sqlpad.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TZ: ${NGINX_TZ}
+      LETSENCRYPT: 'true'
+      LE_EMAIL: ${LE_EMAIL}
+      LE_FQDN: ${LE_DOMAIN}
+
