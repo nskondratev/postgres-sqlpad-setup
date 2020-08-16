@@ -11,10 +11,11 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/sync/errgroup"
+
 	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/query"
 	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/sqlpad"
 	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/users"
-	"golang.org/x/sync/errgroup"
 )
 
 const twoWeeks = 14 * 24 * time.Hour
