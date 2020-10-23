@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/nskondratev/postgres-sqlpad-setup/webhooks/sqlpad"
@@ -43,6 +44,11 @@ func (c *Cleanuper) getUsersToCleanUp(ctx context.Context) ([]sqlpad.User, error
 	res := make([]sqlpad.User, 0, len(users))
 	for _, u := range users {
 		if u.Role == editorRole && time.Now().After(u.CreatedAt.Add(c.userTTL)) {
+			log.Printf(
+				"Delete user with email <%s>, he was created at: %s\n",
+				u.Email,
+				u.CreatedAt.Format(time.RFC3339),
+			)
 			res = append(res, u)
 		}
 	}
