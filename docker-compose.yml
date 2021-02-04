@@ -14,7 +14,8 @@ services:
 
   sqlpad:
     image: sqlpad/sqlpad:5
-    hostname: 'sqlpad'
+    restart: always
+    hostname: sqlpad
     ports:
       - '3000:3000'
     environment:
@@ -44,6 +45,7 @@ services:
 
   webhooks:
     build: ./webhooks
+    restart: always
     hostname: webhooks
     environment:
       ADDR: ':8090'
