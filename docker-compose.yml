@@ -13,7 +13,7 @@ services:
       - ./pg_init_data:/pg_init_data
 
   sqlpad:
-    image: sqlpad/sqlpad:5
+    image: sqlpad/sqlpad:latest
     restart: always
     hostname: sqlpad
     ports:
